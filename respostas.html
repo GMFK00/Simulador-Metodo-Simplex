@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Comparação de Cenários Simplex</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 20px;
+        }
+        h2 {
+            color: #0056b3;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 5px;
+        }
+        h4 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .scenario-container {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .conclusion {
+            background-color: #e9f5ec;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scenario-container">
+        <h2>Cenário 1: Estratégia Agressiva</h2>
+
+        <h4>O Problema</h4>
+        <p>Um agricultor com 200 ha de terra, R$ 250.000 de orçamento e 2.400 horas de mão de obra precisa decidir o que plantar, com os seguintes dados:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cultura</th>
+                    <th>Lucro (R$/ha)</th>
+                    <th>Custo (R$/ha)</th>
+                    <th>Mão de Obra (h/ha)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Soja (x3)</strong></td>
+                    <td><strong>2.500</strong></td>
+                    <td>1.200</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Milho (x1)</td>
+                    <td>2.000</td>
+                    <td>1.500</td>
+                    <td>12</td>
+                </tr>
+                <tr>
+                    <td>Trigo (x4)</td>
+                    <td>1.800</td>
+                    <td>900</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>Feijão (x2)</td>
+                    <td>1.500</td>
+                    <td>800</td>
+                    <td>15</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>Resposta Resumida</h4>
+        <ul>
+            <li><strong>Plano de Plantio:</strong> Plantar <strong>200 hectares de Soja (x3)</strong> e nada das outras culturas.</li>
+            <li><strong>Lucro Máximo:</strong> <strong>R$ 500.000</strong>.</li>
+        </ul>
+
+        <h4>Interpretação</h4>
+        <p>Esta é uma estratégia de <strong>foco total no ativo mais rentável</strong>. A Soja era tão superior em lucro e tão eficiente no uso de recursos (dinheiro e mão de obra) que a única barreira para o lucro foi o limite físico da terra. A decisão ótima foi simplesmente preencher cada hectare disponível com a cultura mais lucrativa, pois não havia escassez de orçamento ou trabalho para suportar essa decisão.</p>
+    </div>
+
+    <div class="scenario-container">
+        <h2>Cenário 2: Estratégia Balanceada</h2>
+
+        <h4>O Problema</h4>
+        <p>O mesmo agricultor com os mesmos limites (200 ha, R$ 250.000, 2.400h), mas os dados das culturas foram ajustados, tornando a Soja um pouco menos lucrativa e mais cara:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cultura</th>
+                    <th>Lucro (R$/ha)</th>
+                    <th>Custo (R$/ha)</th>
+                    <th>Mão de Obra (h/ha)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Soja (x3)</strong></td>
+                    <td><strong>2.200</strong></td>
+                    <td><strong>1.600</strong></td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Milho (x1)</td>
+                    <td>2.000</td>
+                    <td>1.500</td>
+                    <td>12</td>
+                </tr>
+                <tr>
+                    <td>Trigo (x4)</td>
+                    <td>1.800</td>
+                    <td>900</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>Feijão (x2)</td>
+                    <td>1.500</td>
+                    <td>800</td>
+                    <td>15</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h4>Resposta Resumida</h4>
+        <ul>
+            <li><strong>Plano de Plantio:</strong> Plantar <strong>100 hectares de Soja (x3)</strong> e <strong>100 hectares de Trigo (x4)</strong>.</li>
+            <li><strong>Lucro Máximo:</strong> <strong>R$ 400.000</strong>.</li>
+        </ul>
+
+        <h4>Interpretação</h4>
+        <p>Esta é uma estratégia de <strong>equilíbrio entre lucro e custo</strong>. A Soja, apesar de ainda ser a mais rentável, tornou-se cara demais para ser a única aposta. O algoritmo determinou que, para maximizar o lucro, era preciso combinar a <strong>alta rentabilidade da Soja</strong> com a <strong>alta eficiência de custo do Trigo</strong>. Essa divisão 50/50 foi o ponto exato onde o agricultor conseguiu usar <strong>100% da sua terra e 100% do seu orçamento</strong>, garantindo que nenhum recurso crítico ficasse ocioso.</p>
+    </div>
+    
+    <div class="scenario-container">
+        <h2>Comparação Final: Por que a Estratégia Mudou?</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fator de Comparação</th>
+                    <th>Cenário 1 (Estratégia Agressiva)</th>
+                    <th>Cenário 2 (Estratégia Balanceada)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Estratégia Ótima</strong></td>
+                    <td>100% Soja (200 ha)</td>
+                    <td>50% Soja (100 ha), 50% Trigo (100 ha)</td>
+                </tr>
+                <tr>
+                    <td><strong>Lucro Máximo</strong></td>
+                    <td><strong>R$ 500.000</strong></td>
+                    <td>R$ 400.000</td>
+                </tr>
+                <tr>
+                    <td><strong>Recursos Esgotados</strong></td>
+                    <td>Apenas <strong>Terra</strong>. Sobrou dinheiro e mão de obra.</td>
+                    <td><strong>Terra E Orçamento</strong>. Sobrou apenas mão de obra.</td>
+                </tr>
+                <tr>
+                    <td><strong>O "Porquê" da Mudança</strong></td>
+                    <td>A Soja era tão superior que o único gargalo era o espaço físico para plantá-la.</td>
+                    <td>Ao tornar a Soja mais cara, o <strong>orçamento se tornou um segundo gargalo</strong>. O Simplex foi forçado a "diversificar" o plantio com uma cultura mais barata (Trigo) para conseguir usar toda a terra disponível sem estourar o orçamento.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="conclusion">
+            <p><strong>Conclusão:</strong> Esta comparação demonstra perfeitamente o poder do Método Simplex. Uma pequena alteração no custo de uma única cultura transformou a estratégia ótima de uma aposta única e agressiva para uma solução diversificada e balanceada, provando que a melhor decisão depende sempre da interação complexa entre todos os recursos e suas limitações.</p>
+        </div>
+    </div>
+
+</body>
+</html>

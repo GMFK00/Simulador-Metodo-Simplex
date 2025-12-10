@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolvedor Simplex</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Resolvedor de Problemas com Método Simplex</h1>
+            <p>Este app resolve problemas de programação linear de <strong>maximização e minimização</strong> com restrições do tipo <strong>&le;</strong>.</p>
+        </header>
+
+        <main class="config-panel">
+            <h2>1. Configuração do Problema</h2>
+            <div class="form-group">
+                <label for="num-vars">Número de Variáveis (ex: x1, x2):</label>
+                <input type="number" id="num-vars" value="2" min="1">
+            </div>
+            <div class="form-group">
+                <label for="num-constraints">Número de Restrições:</label>
+                <input type="number" id="num-constraints" value="2" min="1">
+            </div>
+            <button id="btn-generate-fields">Gerar Campos</button>
+            <button id="btn-random-fill" class="hidden">Preencher Aleatório</button>
+        </main>
+        
+        <form id="simplex-form" class="hidden">
+            <section class="problem-input">
+                <h2>2. Defina o Problema</h2>
+                
+                <!-- FUNÇÃO OBJETIVO -->
+                <fieldset>
+                    <legend id="objective-legend">Função Objetivo</legend>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="objective-type">Tipo de Problema:</label>
+                        <select id="objective-type">
+                            <option value="maximize" selected>Maximizar Z</option>
+                            <option value="minimize">Minimizar Z</option>
+                        </select>
+                    </div>
+                    <div id="objective-function" class="equation">
+                        <span>Z =</span>
+                        <!-- Inputs gerados -->
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Restrições</legend>
+                    <div id="constraints">
+                        <!-- Restrições -->
+                    </div>
+                </fieldset>
+            </section>
+            
+            <div class="controls">
+                <button type="submit" id="btn-solve">Resolver</button>
+                <button type="reset" id="btn-reset">Limpar Tudo</button>
+            </div>
+        </form>
+
+        <section id="results" class="hidden">
+            <h2>3. Resolução Passo a Passo</h2>
+            <div id="steps-output"></div>
+            <hr>
+            <h2>4. Solução Final</h2>
+            <div id="solution-output"></div>
+        </section>
+
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
