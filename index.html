@@ -10,7 +10,8 @@
     <div class="container">
         <header>
             <h1>Resolvedor de Problemas com Método Simplex</h1>
-            <p>Este app resolve problemas de programação linear de <strong>maximização e minimização</strong> com restrições do tipo <strong>&le;</strong>.</p>
+            <p>Esta demonstração acadêmica resolve problemas de <strong>maximização e minimização</strong> pelo Simplex de duas fases.</p>
+            <p class="scope-note">Aceita restrições <strong>&le;</strong>, <strong>&ge;</strong> e <strong>=</strong>, inclusive com lado direito negativo. Todas as variáveis devem ser não negativas.</p>
         </header>
 
         <main class="config-panel">
@@ -49,6 +50,7 @@
 
                 <fieldset>
                     <legend>Restrições</legend>
+                    <p class="field-hint">Escolha a relação de cada linha. O solver normaliza automaticamente lados direitos negativos.</p>
                     <div id="constraints">
                         <!-- Restrições -->
                     </div>

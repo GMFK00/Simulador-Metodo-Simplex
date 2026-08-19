@@ -35,6 +35,11 @@ header {
     margin-bottom: 20px;
 }
 
+.scope-note, .field-hint {
+    color: #555;
+    font-size: 0.95rem;
+}
+
 h1, h2 { color: var(--primary-color); }
 h1 { margin-bottom: 5px; }
 h2 {
@@ -62,6 +67,12 @@ input[type="number"], select {
 select { /* Estilo específico para o select */
     width: auto;
     background-color: white;
+}
+
+.constraint-relation {
+    min-width: 64px;
+    font-weight: bold;
+    text-align: center;
 }
 
 button {
@@ -130,11 +141,25 @@ legend {
     padding: 2px;
 }
 
-#solution-output {
-    background-color: #e9f5ec;
-    border-left: 5px solid var(--success-color);
+.result-card {
     padding: 15px;
     font-size: 1.1rem;
+}
+
+.result-success {
+    background-color: #e9f5ec;
+    border-left: 5px solid var(--success-color);
+}
+
+.result-error {
+    background-color: #fff1f1;
+    border-left: 5px solid #dc3545;
+}
+
+.diagnostics {
+    color: #555;
+    font-size: 0.9rem;
+    margin-bottom: 0;
 }
 
 .explanation {
