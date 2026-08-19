@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const numVars = parseInt(numVarsInput.value);
         
         try {
-            const { C, A, b } = parseInputs();
-            const result = solve(C, A, b, objectiveType, numVars);
+            const { C, A, b, relations } = parseInputs();
+            const result = solve(C, A, b, objectiveType, numVars, relations);
 
             // Limpa saídas anteriores
             stepsOutput.innerHTML = '';
@@ -47,15 +47,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (step.type === 'explanation') {
                     printExplanation(step.title, step.content);
                 } else if (step.type === 'tableau') {
-                    printTableau(step.tableau, step.title, step.pivotInfo);
+                    printTableau(
+                        step.tableau,
+                        step.title,
+                        step.columns,
+                        step.basis,
+                        step.pivotInfo
+                    );
                 }
             });
 
             // Renderização da solução final ou a mensagem de erro
             if (result.success) {
-                printSolution(result.solution);
+                printSolution(result.solution, result.diagnostics);
             } else {
-                solutionOutput.innerHTML = `<p><strong>${result.message}</strong></p>`;
+                solutionOutput.className = 'result-card result-error';
+                solutionOutput.innerHTML = `
+                    <p><strong>${statusLabel(result.status)}</strong></p>
+                    <p>${result.message}</p>
+                `;
             }
 
             resultsSection.classList.remove('hidden');
@@ -70,20 +80,18 @@ document.addEventListener('DOMContentLoaded', () => {
         stepsOutput.innerHTML += `<div class="explanation"><strong>${title}</strong><br>${content}</div>`;
     }
 
-    function printTableau(tableau, title, pivotInfo = null) {
+    function printTableau(tableau, title, columns, basis, pivotInfo = null) {
         let html = `<strong>${title}:</strong>`;
         html += '<table>';
         
-        html += '<thead><tr>';
-        const numVars = parseInt(numVarsInput.value);
-        const numSlacks = parseInt(numConstraintsInput.value);
-        for(let i = 1; i <= numVars; i++) html += `<th>x${i}</th>`;
-        for(let i = 1; i <= numSlacks; i++) html += `<th>f${i}</th>`;
+        html += '<thead><tr><th>Base</th>';
+        columns.forEach(column => { html += `<th>${column}</th>`; });
         html += '<th>b</th></tr></thead>';
 
         html += '<tbody>';
         tableau.forEach((row, i) => {
-            html += '<tr>';
+            const rowLabel = i < basis.length ? basis[i] : 'Objetivo';
+            html += `<tr><th>${rowLabel}</th>`;
             row.forEach((cell, j) => {
                 let cellContent = parseFloat(cell.toFixed(3));
                 if (pivotInfo && i === pivotInfo.row && j === pivotInfo.col) {
@@ -99,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stepsOutput.innerHTML += html;
     }
 
-    function printSolution(solution) {
+    function printSolution(solution, diagnostics) {
         let html = `<p><strong>Solução Ótima Encontrada!</strong></p><ul>`;
         for (const [key, value] of Object.entries(solution.variables)) {
             if (key.startsWith('x')) {
@@ -107,8 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         html += `</ul><p>${solution.objectiveText} de <strong>Z = ${solution.zValue}</strong></p>`;
+        html += `<p class="diagnostics">${diagnostics.totalPivots} pivoteamento(s)`;
+        if (diagnostics.normalizedRows > 0) {
+            html += `; ${diagnostics.normalizedRows} restrição(ões) normalizada(s)`;
+        }
+        if (diagnostics.degeneratePivots > 0) {
+            html += `; ${diagnostics.degeneratePivots} pivô(s) degenerado(s)`;
+        }
+        html += '.</p>';
         
+        solutionOutput.className = 'result-card result-success';
         solutionOutput.innerHTML = html;
+    }
+
+    function statusLabel(status) {
+        const labels = {
+            infeasible: 'Problema inviável',
+            unbounded: 'Problema ilimitado',
+            iteration_limit: 'Limite de iterações atingido',
+            numerical_failure: 'Falha numérica',
+        };
+        return labels[status] ?? 'Não foi possível concluir';
     }
     
     // Outras funções de UI
@@ -118,11 +145,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(numVars) || isNaN(numConstraints) || numVars < 1 || numConstraints < 1) { alert('Por favor, insira um número válido de variáveis e restrições.'); return; }
         objectiveFunctionDiv.innerHTML = '<span>Z =</span>';
         constraintsDiv.innerHTML = '';
-        for (let i = 1; i <= numVars; i++) { objectiveFunctionDiv.innerHTML += `<input type="number" class="obj-coeff" placeholder="c${i}" required><span>x${i}</span>${i < numVars ? '<span>+</span>' : ''}`; }
+        for (let i = 1; i <= numVars; i++) { objectiveFunctionDiv.innerHTML += `<input type="number" step="any" class="obj-coeff" placeholder="c${i}" required><span>x${i}</span>${i < numVars ? '<span>+</span>' : ''}`; }
         for (let i = 1; i <= numConstraints; i++) {
             let constraintHTML = '<div class="equation">';
-            for (let j = 1; j <= numVars; j++) { constraintHTML += `<input type="number" class="constraint-coeff" data-row="${i - 1}" data-col="${j - 1}" placeholder="a${i}${j}" required><span>x${j}</span>${j < numVars ? '<span>+</span>' : ''}`; }
-            constraintHTML += `<span>&le;</span><input type="number" class="rhs" data-row="${i - 1}" placeholder="b${i}" required></div>`;
+            for (let j = 1; j <= numVars; j++) { constraintHTML += `<input type="number" step="any" class="constraint-coeff" data-row="${i - 1}" data-col="${j - 1}" placeholder="a${i}${j}" required><span>x${j}</span>${j < numVars ? '<span>+</span>' : ''}`; }
+            constraintHTML += `
+                <select class="constraint-relation" data-row="${i - 1}" aria-label="Relação da restrição ${i}">
+                    <option value="&lt;=">≤</option>
+                    <option value=">=">≥</option>
+                    <option value="=">=</option>
+                </select>
+                <input type="number" step="any" class="rhs" data-row="${i - 1}" placeholder="b${i}" required>
+            </div>`;
             constraintsDiv.innerHTML += constraintHTML;
         }
         simplexForm.classList.remove('hidden');
@@ -146,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const value = input.value.trim();
             if (value === '') { alert('Erro de validação: Por favor, preencha todos os campos.'); input.classList.add('invalid-input'); input.focus(); isValid = false; break; }
             if (isNaN(parseFloat(value))) { alert('Erro de validação: Por favor, insira apenas números.'); input.classList.add('invalid-input'); input.focus(); isValid = false; break; }
-            if (input.classList.contains('rhs') && parseFloat(value) < 0) { alert('Erro de validação: Os valores do lado direito (b) devem ser não-negativos.'); input.classList.add('invalid-input'); input.focus(); isValid = false; break; }
         }
         return isValid;
     }
@@ -157,7 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const A = [];
         for (let i = 0; i < numConstraints; i++) { A.push(Array.from(document.querySelectorAll(`.constraint-coeff[data-row="${i}"]`)).map(input => parseFloat(input.value))); }
         const b = Array.from(document.querySelectorAll('.rhs')).map(input => parseFloat(input.value));
-        return { C, A, b };
+        const relations = Array.from(document.querySelectorAll('.constraint-relation')).map(select => select.value);
+        return { C, A, b, relations };
     }
 
     function handleReset() {
